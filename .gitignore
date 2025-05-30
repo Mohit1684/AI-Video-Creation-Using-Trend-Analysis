@@ -1,0 +1,26 @@
+# Ignore Wav2Lip folder completely
+Wav2Lip/
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Other temp files
+*.tmp
+*.bak
+
+# Output folders
+static/output/
+generated_audio.mp3
+
+# Virtual environments (if any)
+venv/

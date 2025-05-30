@@ -1,0 +1,649 @@
+<!-- templates/video.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI News Video Creator - Video Generation</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #4f46e5;
+        --primary-dark: #4338ca;
+        --secondary: #0ea5e9;
+        --accent: #f59e0b;
+        --dark: #1e293b;
+        --light: #f8fafc;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f1f5f9;
+        color: #334155;
+      }
+
+      .navbar {
+        background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        padding: 0.75rem 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .navbar-brand {
+        font-weight: 700;
+        letter-spacing: -0.025em;
+      }
+
+      .nav-link {
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        transition: all 0.2s;
+      }
+
+      .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .nav-link.active {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .container {
+        max-width: 900px;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .content-card {
+        background-color: white;
+        border-radius: 1rem;
+        box-shadow: var(--card-shadow);
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        transition: transform 0.2s;
+      }
+
+      .content-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .section-title {
+        color: var(--dark);
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .form-label {
+        font-weight: 500;
+        color: #4b5563;
+        margin-bottom: 0.5rem;
+      }
+
+      .form-select,
+      .form-control {
+        border-radius: 0.5rem;
+        padding: 0.625rem 1rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        transition: all 0.2s;
+      }
+
+      .form-select:focus,
+      .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+      }
+
+      .btn {
+        padding: 0.625rem 1.25rem;
+        font-weight: 500;
+        border-radius: 0.5rem;
+        transition: all 0.2s;
+      }
+
+      .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+      }
+
+      .btn-primary:hover,
+      .btn-primary:focus {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .file-input-wrapper {
+        background-color: #f8fafc;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s;
+      }
+
+      .file-input-wrapper:hover {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      }
+
+      .preview-image {
+        max-width: 200px;
+        margin-top: 0.75rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+      }
+
+      .preview-image:hover {
+        transform: scale(1.05);
+      }
+
+      #videoSection {
+        background-color: #f8fafc;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        border: 1px solid #e2e8f0;
+      }
+
+      #videoPlayer {
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        margin-top: 1rem;
+        background-color: #000;
+      }
+
+      .loader {
+        width: 100%;
+        height: 4px;
+        overflow: hidden;
+        background-color: #e2e8f0;
+        border-radius: 2px;
+      }
+
+      .loader-bar {
+        width: 30%;
+        height: 100%;
+        background-color: var(--primary);
+        border-radius: 2px;
+        animation: loader 1.5s infinite ease-in-out;
+      }
+
+      @keyframes loader {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(400%);
+        }
+      }
+
+      .step-indicator {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+      }
+
+      .step-number {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        background-color: #e2e8f0;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 2;
+      }
+
+      .step.active .step-number {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      .step-title {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #64748b;
+      }
+
+      .step.active .step-title {
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .step-connector {
+        flex: 1;
+        height: 2px;
+        background-color: #e2e8f0;
+        margin: 0 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .toast-container {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        z-index: 1000;
+      }
+
+      .toast {
+        background-color: white;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        box-shadow: var(--card-shadow);
+        width: 300px;
+        display: flex;
+        align-items: center;
+        opacity: 0;
+        transform: translateY(100%);
+        animation: toast-in 0.3s forwards;
+      }
+
+      @keyframes toast-in {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .toast-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-right: 0.75rem;
+        color: var(--primary);
+      }
+
+      .file-input-container {
+        position: relative;
+        margin-bottom: 1rem;
+      }
+
+      .file-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border: 2px dashed #cbd5e1;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+        font-weight: 500;
+        color: #64748b;
+      }
+
+      .file-label:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .file-label i {
+        font-size: 1.5rem;
+      }
+
+      .file-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+      }
+
+      .preview-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 1rem;
+      }
+
+      .preview-label {
+        font-size: 0.875rem;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 0 1rem;
+        }
+
+        .content-card {
+          padding: 1.5rem;
+        }
+
+        .file-input-wrapper {
+          padding: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/"
+          ><i class="fas fa-film me-2"></i>AI News Studio</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <div class="navbar-nav ms-auto">
+            <a class="nav-link" href="/"
+              ><i class="fas fa-edit me-1"></i>Content</a
+            >
+            <a class="nav-link active" href="/video_generation"
+              ><i class="fas fa-video me-1"></i>Video</a
+            >
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="step-indicator">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-title">Content</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step active">
+          <div class="step-number">2</div>
+          <div class="step-title">Video</div>
+        </div>
+      </div>
+
+      <div class="content-card">
+        <h2 class="section-title">
+          <i class="fas fa-video text-primary me-2"></i>Video Generation
+        </h2>
+        <form id="videoForm">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="file-input-wrapper">
+                <label class="form-label"
+                  ><i class="fas fa-image me-2"></i>Upload an Image</label
+                >
+                <div class="file-input-container">
+                  <label for="image" class="file-label">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>Drop your image here or click to browse</span>
+                  </label>
+                  <input
+                    type="file"
+                    class="file-input"
+                    id="image"
+                    name="image"
+                    accept="image/*"
+                    required
+                  />
+                </div>
+                <div class="preview-container">
+                  <p class="preview-label">Image Preview</p>
+                  <img
+                    id="imagePreview"
+                    class="preview-image hidden"
+                    src="#"
+                    alt="Preview"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="file-input-wrapper">
+                <label class="form-label"
+                  ><i class="fas fa-music me-2"></i>Upload Audio</label
+                >
+                <div class="file-input-container">
+                  <label for="audio" class="file-label">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>Drop your audio file here or click to browse</span>
+                  </label>
+                  <input
+                    type="file"
+                    class="file-input"
+                    id="audio"
+                    name="audio"
+                    accept="audio/*"
+                    required
+                  />
+                </div>
+                <div class="preview-container">
+                  <p class="preview-label">Audio Preview</p>
+                  <audio
+                    id="audioPreview"
+                    controls
+                    class="w-100 hidden"
+                  ></audio>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            <i class="fas fa-magic me-2"></i>Generate Video
+          </button>
+        </form>
+      </div>
+
+      <div id="videoSection" class="content-card hidden">
+        <h3 class="section-title">
+          <i class="fas fa-play-circle text-primary me-2"></i>Generated Video
+        </h3>
+        <p class="text-muted mb-3">
+          Your AI-generated news video is ready. You can download it or share it
+          directly.
+        </p>
+        <video id="videoPlayer" controls class="w-100">
+          <source src="" type="video/mp4" />
+          Your browser does not support the video element.
+        </video>
+        <div class="d-flex justify-content-between mt-4">
+          <a href="#" id="downloadBtn" class="btn btn-success">
+            <i class="fas fa-download me-2"></i>Download Video
+          </a>
+          <a href="/" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Create Another Video
+          </a>
+        </div>
+      </div>
+
+      <div id="loaderContainer" class="content-card hidden">
+        <h3 class="section-title" id="loaderTitle">
+          <i class="fas fa-cog fa-spin text-primary me-2"></i>Processing Your
+          Request
+        </h3>
+        <p id="loaderMessage">
+          Please wait while we generate your video. This may take a few
+          minutes...
+        </p>
+        <div class="loader">
+          <div class="loader-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const imageInput = document.getElementById("image");
+        const imagePreview = document.getElementById("imagePreview");
+        const audioInput = document.getElementById("audio");
+        const audioPreview = document.getElementById("audioPreview");
+        const videoSection = document.getElementById("videoSection");
+        const videoPlayer = document.getElementById("videoPlayer");
+        const loaderContainer = document.getElementById("loaderContainer");
+        const loaderTitle = document.getElementById("loaderTitle");
+        const loaderMessage = document.getElementById("loaderMessage");
+        const downloadBtn = document.getElementById("downloadBtn");
+        const toastContainer = document.getElementById("toastContainer");
+
+        function showToast(message, type = "success") {
+          const toast = document.createElement("div");
+          toast.className = "toast";
+
+          let icon = "check-circle";
+          let color = "var(--success)";
+
+          if (type === "error") {
+            icon = "exclamation-circle";
+            color = "var(--danger)";
+          } else if (type === "warning") {
+            icon = "exclamation-triangle";
+            color = "var(--warning)";
+          } else if (type === "info") {
+            icon = "info-circle";
+            color = "var(--secondary)";
+          }
+
+          toast.innerHTML = `
+                    <i class="fas fa-${icon} toast-icon" style="color: ${color}"></i>
+                    <div>${message}</div>
+                `;
+
+          toastContainer.appendChild(toast);
+
+          setTimeout(() => {
+            toast.style.opacity = "0";
+            toast.style.transform = "translateY(100%)";
+            toast.style.transition = "all 0.3s";
+
+            setTimeout(() => {
+              toast.remove();
+            }, 300);
+          }, 5000);
+        }
+
+        function showLoader(title, message) {
+          loaderTitle.innerHTML = `<i class="fas fa-cog fa-spin text-primary me-2"></i>${title}`;
+          loaderMessage.textContent = message;
+          loaderContainer.classList.remove("hidden");
+          window.scrollTo({
+            top: loaderContainer.offsetTop - 20,
+            behavior: "smooth",
+          });
+        }
+
+        function hideLoader() {
+          loaderContainer.classList.add("hidden");
+        }
+
+        imageInput.addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              imagePreview.src = e.target.result;
+              imagePreview.classList.remove("hidden");
+              showToast("Image uploaded successfully!");
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+
+        audioInput.addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          if (file) {
+            const url = URL.createObjectURL(file);
+            audioPreview.src = url;
+            audioPreview.classList.remove("hidden");
+            showToast("Audio uploaded successfully!");
+          }
+        });
+
+        document
+          .getElementById("videoForm")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            if (!imageInput.files[0]) {
+              showToast("Please select an image file", "error");
+              return;
+            }
+
+            if (!audioInput.files[0]) {
+              showToast("Please select an audio file", "error");
+              return;
+            }
+
+            showLoader(
+              "Generating Video",
+              "This process might take several minutes. Our AI is creating a lip-synced video using your image and audio..."
+            );
+            videoSection.classList.add("hidden");
+
+            const formData = new FormData(this);
+            fetch("/generate_video", {
+              method: "POST",
+              body: formData,
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                hideLoader();
+                if (data.success) {
+                  videoPlayer.src = data.video_url;
+                  downloadBtn.href = data.video_url;
+                  videoSection.classList.remove("hidden");
+                  window.scrollTo({
+                    top: videoSection.offsetTop - 20,
+                    behavior: "smooth",
+                  });
+                  showToast("Video generated successfully!");
+                } else {
+                  showToast(`Error: ${data.error}`, "error");
+                }
+              })
+              .catch((error) => {
+                hideLoader();
+                showToast("An error occurred. Please try again.", "error");
+              });
+          });
+      });
+    </script>
+  </body>
+</html>
