@@ -24,3 +24,7 @@ generated_audio.mp3
 
 # Virtual environments (if any)
 venv/
+"ffmpeg.exe" 
+"ffplay.exe" 
+"ffprobe.exe" 
+"temp/result.avi" 
